@@ -6,6 +6,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
         .link_libc = true,
+        .sanitize_c = .off,
     });
 
     // zig-config/config.h replaces the autoconf-generated config.h
