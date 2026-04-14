@@ -51,6 +51,7 @@ pub fn build(b: *std.Build) void {
     });
 
     lib.installHeadersDirectory(b.path("include"), "", .{});
+    lib.installHeadersDirectory(b.path("zig-config/cdio"), "cdio", .{});
     b.installArtifact(lib);
 }
 
