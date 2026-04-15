@@ -17,33 +17,31 @@ pub fn build(b: *std.Build) void {
 
     lib_mod.addCSourceFiles(.{ .files = &common_sources });
 
+    // device.c's CdIo_all_drivers table references every platform driver.
+    // Each driver file compiles cross-platform: the OS-specific code is inside
+    // #ifdef HAVE_xxx_CDROM guards, so on other platforms the file provides
+    // only the required cdio_have_xxx() = false stubs.
+    lib_mod.addCSourceFiles(.{ .files = &all_driver_stubs });
+
     switch (target.result.os.tag) {
         .windows => {
             lib_mod.addCSourceFiles(.{ .files = &.{
                 "lib/driver/MSWindows/aspi32.c",
-                "lib/driver/MSWindows/win32.c",
                 "lib/driver/MSWindows/win32_ioctl.c",
             } });
         },
         .macos => {
             lib_mod.linkFramework("IOKit", .{});
             lib_mod.linkFramework("CoreFoundation", .{});
-            lib_mod.addCSourceFiles(.{ .files = &.{
-                "lib/driver/osx.c",
-            } });
         },
         .freebsd => {
+            lib_mod.addIncludePath(b.path("lib/driver/FreeBSD"));
             lib_mod.addCSourceFiles(.{ .files = &.{
-                "lib/driver/FreeBSD/freebsd.c",
                 "lib/driver/FreeBSD/freebsd_cam.c",
                 "lib/driver/FreeBSD/freebsd_ioctl.c",
             } });
         },
-        else => {
-            lib_mod.addCSourceFiles(.{ .files = &.{
-                "lib/driver/gnu_linux.c",
-            } });
-        },
+        else => {},
     }
 
     const lib = b.addLibrary(.{
@@ -98,6 +96,20 @@ const common_sources = [_][]const u8{
     "lib/udf/udf_file.c",
     "lib/udf/udf_fs.c",
     "lib/udf/udf_time.c",
+};
+
+// All platform driver files, compiled on every target.
+// Each file guards its OS-specific code with #ifdef HAVE_xxx_CDROM, so on
+// other platforms it only emits the required cdio_have_xxx() = false stubs
+// that device.c's CdIo_all_drivers table must resolve.
+const all_driver_stubs = [_][]const u8{
+    "lib/driver/aix.c",
+    "lib/driver/netbsd.c",
+    "lib/driver/solaris.c",
+    "lib/driver/gnu_linux.c",
+    "lib/driver/osx.c",
+    "lib/driver/MSWindows/win32.c",
+    "lib/driver/FreeBSD/freebsd.c",
 };
 
 const std = @import("std");
