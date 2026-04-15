@@ -33,6 +33,10 @@ pub fn build(b: *std.Build) void {
         .macos => {
             lib_mod.linkFramework("IOKit", .{});
             lib_mod.linkFramework("CoreFoundation", .{});
+            // iconv is used by utf8.c (HAVE_ICONV defined on macOS).
+            // On Apple platforms it lives in /usr/lib/libiconv.dylib and
+            // is not pulled in automatically by link_libc = true.
+            lib_mod.linkSystemLibrary("iconv", .{});
         },
         .freebsd => {
             lib_mod.addIncludePath(b.path("lib/driver/FreeBSD"));
