@@ -47,6 +47,7 @@
 #  undef  EMPTY_ARRAY_SIZE
 #  define EMPTY_ARRAY_SIZE 0
 #  define HAVE_WIN32_CDROM 1
+#  define HAVE_WINDOWS_H 1
 #  define HAVE_NTDDSCSI_H 1
 #  define HAVE_NTDDCDRM_H 1
 #  define HAVE_SYS_STAT_H 1
