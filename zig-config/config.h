@@ -53,6 +53,23 @@
 #  define HAVE_SYS_STAT_H 1
 #  define HAVE_SYS_TYPES_H 1
 #  define HAVE_UNISTD_H 1
+#elif defined(__EMSCRIPTEN__)
+/* Emscripten provides the portable POSIX APIs used by the image backends, but
+   it has no Linux CD-ROM device interface. Keep all OS drivers stubbed. */
+#  define HAVE_ICONV 1
+#  define HAVE_GMTIME_R 1
+#  define HAVE_LOCALTIME_R 1
+#  define HAVE_SETENV 1
+#  define HAVE_STRINGS_H 1
+#  define HAVE_SYS_STAT_H 1
+#  define HAVE_SYS_TYPES_H 1
+#  define HAVE_TIMEGM 1
+#  define HAVE_TZSET 1
+#  define HAVE_TZNAME 1
+#  define HAVE_UNSETENV 1
+#  define HAVE_UNISTD_H 1
+#  define _FILE_OFFSET_BITS 64
+#  define _LARGE_FILES 1
 #elif defined(__APPLE__)
 #  define HAVE_DARWIN_CDROM 1
 #  define HAVE_ICONV 1

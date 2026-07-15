@@ -20,6 +20,14 @@ pub fn build(b: *std.Build) void {
     lib_mod.addIncludePath(b.path("include"));
     lib_mod.addIncludePath(b.path("lib/driver"));
 
+    if (target.result.os.tag == .emscripten) {
+        const sysroot = b.sysroot orelse
+            @panic("Emscripten builds require --sysroot <em-config CACHE>/sysroot");
+        lib_mod.addSystemIncludePath(.{
+            .cwd_relative = b.pathJoin(&.{ sysroot, "include" }),
+        });
+    }
+
     lib_mod.addCSourceFiles(.{ .files = &common_sources });
 
     if (target.result.abi.isAndroid()) {
